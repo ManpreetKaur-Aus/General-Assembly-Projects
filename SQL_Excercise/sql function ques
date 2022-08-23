@@ -1,0 +1,83 @@
+--For every unique product name, create a sentence that says, “In the X department, the Y is on sale for 50% off!” 
+--where X is the sub-category and
+--Y is the name of the product.
+
+select *
+from products
+
+SELECT DISTINCT CONCAT('In the ', sub_category, ' department, the ', product_name, ' is on sale for 50% off') as sale
+FROM products; 
+
+--Your boss says printing place cards for each product is free if the length is less than 100 characters. 
+--Based on your answer to question #1, how many products have place cards with more than 100 characters?
+
+SELECT distinct(product_name), LENGTH(CONCAT('In the ', sub_category, ' department, the ', product_name, ' is on sale for 50% off!')) as sale
+FROM products 
+WHERE LENGTH(CONCAT('In the ', sub_category, ' department, the ', product_name, ' is on sale for 50% off')) > 100
+
+-- using distinct length
+
+SELECT distinct LENGTH(CONCAT('In the ', sub_category, ' department, the ', product_name, ' is on sale for 50% off!')) as sale
+FROM products 
+WHERE LENGTH(CONCAT('In the ', sub_category, ' department, the ', product_name, ' is on sale for 50% off')) > 100
+
+
+--You notice the Executive Impressions wall clock names are really long. For these products, omit the words “Executive Impressions” from the place card. 
+--Write a query that returns the same verbiage as in #1 but without the vendor name for only Executive Impressions wall clocks. 
+--How many characters is it now and do they meet the 100 character limit?
+
+
+SELECT 
+count(DISTINCT CONCAT('In the', sub_category, ' department, the ', REPLACE(product_name,'Executive Impressions','') ,' is on sale for 50% off!')) as total_sale
+FROM products 
+--where product_name not like '%Executive Impressions%' and 
+where LENGTH(CONCAT('In the', sub_category, ' department, the ', REPLACE(product_name,'Executive Impressions','') ,' is on sale for 50% off!')) >100
+
+
+
+
+
+--Looking at the customer roster, create a column that only shows the customer’s last name. 
+--Ensure there are no extra white spaces. Hint: Use SUBSTRING, STRPOS, and TRIM
+
+SELECT *
+FROM customers
+
+substring('Thomas' from 2 for 3)
+
+SELECT customer_name, 
+	SUBSTRING( customer_name, 1,
+	STRPOS( customer_name, ' ' ) ) as first_name, 
+	substring (customer_name from strpos (customer_name, ' ')+1 for length(customer_name)) as last_name
+FROM customers
+
+SELECT TRIM(SUBSTRING(customer_name, STRPOS(customer_name, ' '))) as last_name FROM customers; 
+
+
+--Your team wants to issue a market research survey to a sample pool of customers. Using the LEFT function, 
+--find the customers and their segments who fall into the AD, AF, or AJ group.
+
+select customer_name, left(customer_name, 2) as initial,segment,customer_id
+from customers
+where left(customer_name, 2) in ('Ad','Af','Aj')
+
+--Split the order_id into 3 separate columns. Limit results to 100 rows.
+
+select *
+from orders
+
+select order_id, left(order_id,2) as first_part,
+split_part(order_id, '-',2) as second_part,split_part(order_id, '-',3) as third_part
+from orders
+limit 100;
+
+-- Superstore is updating its shipping categories and needs to refresh this in our database. In the orders table, change “Standard Class” to “Economy Class” 
+-- and show how many orders were placed in 2018 for each of the ship mode classes.
+
+select *, replace(ship_mode, 'Standard Class','Economy Class')
+from orders
+
+
+
+
+

@@ -1,0 +1,56 @@
+select * 
+from gender_pay_gap_21_22
+
+-- 1.How many companies are in the data set?
+
+select distinct count(companynumber)
+from gender_pay_gap_21_22
+--10174
+
+-- 2.How many of them submitted their data after the reporting deadline?
+select count(submittedafterthedeadline) as reporting_after_deadline
+from gender_pay_gap_21_22
+where submittedafterthedeadline = 'True'
+--361
+
+-- 3.How many companies have not provided a URL?
+select distinct count(companylinktogpginfo)
+from gender_pay_gap_21_22
+where companylinktogpginfo != '0'
+--6474
+
+-- 4.Which measures of pay gap contain too much missing data, and should not be used in our analysis?
+select
+	case 
+		when employername ='0' then 1
+		when companylinktogpginfo ='0' then 3
+		else neither
+end as not_found
+from gender_pay_gap_21_22 
+where 1 like 0
+
+SELECT *
+FROM "table_name"
+WHERE "column1"+"column2"+"columnN" IS NULL;
+
+select count(*)
+from gender_pay_gap_21_22 
+where concat(employername,employerid,address,postcode,companynumber,siccodes, diffmeanhourlypercent,diffmedianhourlypercent,diffmeanbonuspercent,diffmedianbonuspercent,
+			malebonuspercent,companylinktogpginfo) is null
+
+
+-- 5.Choose which column you will use to calculate the pay gap. Will you use DiffMeanHourlyPercent or DiffMedianHourlyPercent? Can you justify your choice?
+
+-- 6.Use an appropriate metric to find the average gender pay gap across all the companies in the data set. Did you use the mean or the median as your averaging metric? Can you justify your choice?
+-- 7.What are some caveats we need to be aware of when reporting the figure we’ve just calculated?
+-- 8.What are the 10 companies with the largest pay gaps skewed towards men?
+-- 9.What do you notice about the results? Are these well-known companies?
+-- 10.Apply some additional filtering to pick out the most significant companies with large pay gaps.
+-- 11.How would you report on the results? Can we say that these companies are engaging in unlawful pay discrimination?
+-- 12.What’s the average pay gap in London versus outside London?
+-- 13.What’s the average pay gap in London versus Birmingham?
+-- 14.What is the average pay gap within schools?
+-- 15.What is the average pay gap within banks?
+-- 16.Is there a relationship between the number of employees at a company and the average pay gap?
+
+

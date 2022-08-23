@@ -1,0 +1,50 @@
+
+--Q1. Top 5 products by sales under each category (CTE + Partition by + rank/dense_rank)
+--Q2. Find percent of times a product was sold for more than 25% discount (CTE + Partition By)
+--Q3. Find monthly moving average of sales with window size 3 (CTE + window function ROWS Preceeding/following)
+--Q4. Count and print from 1 upto 50 using a sql qeury (without create a table/column) (recursive CTE)
+
+
+
+--Q1. Top 5 products by sales under each category (CTE + Partition by + rank/dense_rank)
+
+-- select distinct(category), product_name, sum(product_cost_to_consumer), rank() over category_rank 
+-- from products 
+-- group by 1,2 
+-- window category_rank as (partition by category order by product_name desc)
+-- order by 3 desc
+
+With CTE
+AS
+(select distinct(p.category ), sum(sales), p.product_name,
+				rank () over(
+						partition by p.category 
+						order by sum(sales) desc
+						) as category_rank 
+							
+from products p
+	join orders as o on
+	p.product_id=o.product_id
+group by 1,3)
+
+ select * from CTE
+ where category_rank <=5
+ 
+
+--Q2. Find percent of times a product was sold for more than 25% discount (CTE + Partition By)
+
+
+With CTE_25 AS 
+(Select product_id,cast(count(Order_id) as float) as count25 from orders where discount>.25
+ group by product_id)
+,CTE_total as(Select product_id,cast(count(Order_id) as float) as counttotal from orders 
+ group by product_id)
+select CTE_25.product_id as Product,cast((count25/counttotal)as float) as Percent_Times,CTE_25.*,CTE_total.* from CTE_25 Join  CTE_total ON
+ CTE_25.product_id=CTE_total.product_id
+
+
+
+
+
+
+
